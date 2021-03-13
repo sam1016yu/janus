@@ -28,7 +28,7 @@ sudo pip install -r requirements.txt
 
 Get source code:
 ```
-git clone --recursive https://github.com/NYU-NEWS/janus.git
+git clone --recursive https://github.com/sam1016yu/janus.git
 ```
 
 Build:
