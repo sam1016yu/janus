@@ -34,7 +34,7 @@ from deptran.rcc_rpc import ServerControlProxy
 from deptran.rcc_rpc import ClientControlProxy
 from pylib import ps
 
-LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.DEBUG
 LOG_FILE_LEVEL = logging.DEBUG
 logger = logging.getLogger('janus')
 
@@ -852,7 +852,7 @@ class ServerController(object):
         def run_one_server(process, process_name, host_process_counts):
             logger.info("starting %s @ %s", process_name, process.host_address)
             cmd = self.gen_process_cmd(process, host_process_counts)
-            logger.debug("running: %s", cmd)
+            logger.debug("running at host %s : %s", process.host_address, cmd)
             subprocess.call(['ssh', '-f',process.host_address, cmd])
 
         logger.debug(self.process_infos)
