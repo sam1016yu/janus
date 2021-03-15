@@ -405,7 +405,7 @@ def run_experiments(args):
             num_server,
             args.num_replicas)
         try:
-            # save_git_revision()
+            save_git_revision()
             result = run_experiment(config_file, 
                                     experiment_name, 
                                     args, 

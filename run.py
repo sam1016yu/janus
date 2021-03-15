@@ -34,8 +34,8 @@ from deptran.rcc_rpc import ServerControlProxy
 from deptran.rcc_rpc import ClientControlProxy
 from pylib import ps
 
-LOG_LEVEL = logging.DEBUG
-LOG_FILE_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
+LOG_FILE_LEVEL = logging.INFO
 logger = logging.getLogger('janus')
 
 cwd = os.getcwd()
@@ -707,7 +707,7 @@ class ServerController(object):
                 logger.info("Connected to site %s @ %s", site.name, site.process.host_address)
 
             for site in sites:
-
+                time.sleep(2)
                 logger.info("call sync_server_ready on site {}".format(site.id))
                 while (site.rpc_proxy.sync_server_ready() != 1):
                     time.sleep(1) # waiting for server to initialize
@@ -853,6 +853,8 @@ class ServerController(object):
             logger.info("starting %s @ %s", process_name, process.host_address)
             cmd = self.gen_process_cmd(process, host_process_counts)
             logger.debug("running at host %s : %s", process.host_address, cmd)
+            # subprocess.call(['rsync', '-a', '/users/miaoyu/janus/tmp','miaoyu@{}:/users/miaoyu/janus'.format(process.host_address)])
+            time.sleep(1)
             subprocess.call(['ssh', '-f',process.host_address, cmd])
 
         logger.debug(self.process_infos)
