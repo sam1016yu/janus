@@ -274,7 +274,7 @@ def run_experiment(config_file, name, args, benchmark, mode, num_client):
     cmd.extend(["-t", str(args.s_timeout)])
     cmd.extend(["-f", config_file]) 
     cmd.extend(["-d", args.duration])
-    cmd.extend(['-l','/users/miaoyu/janus_log'])
+    cmd.extend(['-l','/users/miaoyu/'])
     cmd = [str(c) for c in cmd]
 
     logger.info("running: %s", " ".join(cmd))
@@ -304,7 +304,7 @@ def save_git_revision():
 
 
 def archive_results(name):
-    log_dir = "/users/miaoyu/janus_log"
+    log_dir = "/users/miaoyu/"
     scripts_dir = "./scripts/"
     archive_dir = "./archive/"
     log_file = os.path.join(log_dir, name + ".log")
@@ -326,7 +326,7 @@ def archive_results(name):
 
 
 def scrape_data(name):
-    log_dir = "/users/miaoyu/janus_log"
+    log_dir = "/users/miaoyu/"
     scripts_dir = "./scripts/"
     log_file = os.path.join(log_dir, name + ".log")
     output_data_file = os.path.join(log_dir, name + ".yml")
