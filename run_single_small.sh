@@ -10,7 +10,7 @@ function run_tests {
 
 	# tpca_fixed 3
 	# zipf_graph 3
-	tpcc 6 
+	tpcc 4 
 
 #	rw_fixed
 #	tpca_fixed
@@ -49,7 +49,8 @@ function tpcc {
 		cpu=2
 	fi
 	exp_name=${prefix}_tpcc_${shards}
-	./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m brq:brq  -m tapir:tapir -c 1 -c 10  -s $shards -u $cpu -r 3 -d $duration $exp_name
+	# ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m brq:brq  -m tapir:tapir -c 1 -c 10  -s $shards -u $cpu -r 3 -d $duration $exp_name
+	./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m brq:brq  -c 10  -s $shards -u $cpu -r 3 -d $duration $exp_name
 	new_experiment $exp_name
 }
 
