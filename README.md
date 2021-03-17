@@ -35,8 +35,11 @@ Build:
 
 ```
 ./waf configure build -t
+mkdir log
+mkdir archive
 
 ```
+
 Test run:
 ```
 ./test_run.py -m janus
