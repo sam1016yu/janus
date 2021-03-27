@@ -843,6 +843,8 @@ class ServerController(object):
 
         host_process_counts[process.host_address] += 1
         cmd.append(s)
+        # cmd.append("cd /users/miaoyu/ ;")
+        # cmd.append("sudo perf record -F 99 -g -- sleep 60")
         return ' '.join(cmd)
 
     def start(self):

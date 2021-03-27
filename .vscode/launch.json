@@ -7,26 +7,17 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["-g", 
-                "-hh", "config/hosts.yml", 
-                "-cc", "config/client_closed.yml", 
-                "-cc", "/tmp/concurrent.yml", 
-                "-cc", "config/tpcc.yml",
-                 "-cc", "config/tapir.yml", 
-                 "-b", "tpcc" ,
-                 "-m", "brq:brq" ,
-                 "-m", "2pl_ww:multi_paxos",
-                 "-m", "occ:multi_paxos",
-                 "-m", "tapir:tapir", 
-                 "-c", "1", 
-                 "-c", "2", 
-                 "-c", "4", 
-                  "-c", "8",
-                  "-c", "16", 
-                  "-c", "24",
-                  "-c", "28",
-                  "-c", "32", 
-                  "-s", "6", "-u", "2", "-r", "3","-d", "30","single_dc","--allow-client-overlap"]
+            "args":["-id", "1", "-n", "single_dc-tpcc_brq-brq_1-1", "-t", "30", "-f", "/proj/osu-nfs-test-PG0/miao/janus/tmp/janus-final-single_dcdsXRYN.yml", "-d" ,"30", "-l", "/users/miaoyu/"]
+            // "args": ["-g", 
+            //     "-hh", "config/hosts.yml", 
+            //     "-cc", "config/client_closed.yml", 
+            //     "-cc", "/tmp/concurrent.yml", 
+            //     "-cc", "config/tpcc.yml",
+            //      "-cc", "config/tapir.yml", 
+            //      "-b", "tpcc" ,
+            //      "-m", "brq:brq" ,
+            //      "-c", "1", 
+            //       "-s", "6", "-u", "2", "-r", "3","-d", "30","single_dc"]
         }
     ]
 }
