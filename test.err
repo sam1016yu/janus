@@ -1,0 +1,27 @@
+  Attemptting to print stack trace
+  *** begin stack trace ***
+  Attemptting to print stack trace
+  *** begin stack trace ***
+  Attemptting to print stack trace
+  *** begin stack trace ***
+  Attemptting to print stack trace
+  *** begin stack trace ***
+0    ./build/deptran_server(+0x22693d) [0x55d2d126693d]
+1    ./build/deptran_server(+0x8dddc) [0x55d2d10cdddc]
+2    ./build/deptran_server(+0x91373) [0x55d2d10d1373]
+3    ./build/deptran_server(+0xfddde) [0x55d2d113ddde]
+4    ./build/deptran_server(+0x1e7c72) [0x55d2d1227c72]
+5    ./build/deptran_server(+0xfe403) [0x55d2d113e403]
+6    ./build/deptran_server(+0xffb80) [0x55d2d113fb80]
+7    ./build/deptran_server(+0x82e9a) [0x55d2d10c2e9a]
+8    ./build/deptran_server(+0xfe830) [0x55d2d113e830]
+9    ./build/deptran_server(+0x1917ee) [0x55d2d11d17ee]
+10   ./build/deptran_server(+0x197a89) [0x55d2d11d7a89]
+11   ./build/deptran_server(+0x19afb7) [0x55d2d11dafb7]
+12   ./build/deptran_server(+0x1a4317) [0x55d2d11e4317]
+13   ./build/deptran_server(+0x24ff67) [0x55d2d128ff67]
+14   ./build/deptran_server(+0x24e08b) [0x55d2d128e08b]
+15   ./build/deptran_server(+0x24719c) [0x55d2d128719c]
+16   ./build/deptran_server(+0x247e0b) [0x55d2d1287e0b]
+17   /lib/x86_64-linux-gnu/libpthread.so.0(+0x76db) [0x7f6997b2a6db]
+  ***  end stack trace  ***

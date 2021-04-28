@@ -816,6 +816,7 @@ class ServerController(object):
 
     def gen_process_cmd(self, process, host_process_counts):
         cmd = []
+        # cmd.append("ulimit -s unlimited;")
         cmd.append("cd " + deptran_home + "; ")
         cmd.append("mkdir -p " + self.log_dir + "; ")
         if (len(self.recording_path) != 0):
@@ -824,6 +825,7 @@ class ServerController(object):
         else:
             recording = ""
 
+        
         s = "nohup " + self.taskset_func(host_process_counts[process.host_address]) + \
                " ./build/deptran_server " + \
                "-b " + \
@@ -842,6 +844,10 @@ class ServerController(object):
              "&"
 
         host_process_counts[process.host_address] += 1
+
+        
+        # if process.name == "host16":
+        #     s = "gdbserver localhost:7778 "+s
         cmd.append(s)
         return ' '.join(cmd)
 

@@ -99,6 +99,7 @@ void server_launch_worker(vector<Config::SiteInfo>& server_sites) {
     // start communicator after all servers are running
     // setup communication between controller script
     worker.SetupHeartbeat();
+    // Log_info("Done set up heartbeat for site %d",);
   }
   Log_info("server workers' communicators setup");
 }

@@ -375,6 +375,7 @@ void ClassicCoord::CommitAck(phase_t phase) {
 void ClassicCoord::End() {
   TxnCommand* txn = (TxnCommand*) cmd_;
   TxnReply& txn_reply_buf = txn->get_reply();
+  // std::this_thread::sleep_for(std::chrono::microseconds(100));
   double last_latency  = txn->last_attempt_latency();
   if (committed_) {
     txn->reply_.res_ = SUCCESS;
