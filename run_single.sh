@@ -1,6 +1,7 @@
 #!/bin/bash
 duration=30
 prefix="1103test"
+timeout_s=$((duration + 30))
 
 set -v
 
@@ -11,7 +12,7 @@ function write_concurrent {
 
 function new_experiment {
 	# clean logs
-	rm -rf tmp/* log/* 
+  rm -rf tmp/* log/*
 	tar -czvf ~/${1}.tgz archive && rm -rf archive && mkdir -p archive
 	printf '=%.0s' {1..40}
 	echo
@@ -34,13 +35,16 @@ function TPCC_wrapper {
 	exp_name=${prefix}_tpcc_Alg${alg_name}_${shards}shards_${cpu}cpus_${concurrent}cc_${replica}rep
 	write_concurrent $concurrent
 	# number of -c is the client numbers tested (times the concurrent number currently stored in /tmp/concurrent.yml)
-	timeout -s SIGKILL 12m ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
+#	timeout -s SIGKILL 12m ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
+	timeout -s SIGKILL ${timeout_s}s ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
+
 	new_experiment $exp_name
-	concurrent=1     # amplification factor for client
-	exp_name=${prefix}_tpcc_Alg${alg_name}_${shards}shards_${cpu}cpus_${concurrent}cc_${replica}rep
-	write_concurrent $concurrent
-	timeout -s SIGKILL 10m ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg}  -c 10  -s $shards -u $cpu -r $replica -d $duration $exp_name
-	new_experiment $exp_name
+
+#	concurrent=1     # amplification factor for client
+#	exp_name=${prefix}_tpcc_Alg${alg_name}_${shards}shards_${cpu}cpus_${concurrent}cc_${replica}rep
+#	write_concurrent $concurrent
+#	timeout -s SIGKILL 10m ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg}  -c 10  -s $shards -u $cpu -r $replica -d $duration $exp_name
+#	new_experiment $exp_name
 }
 
 
@@ -78,6 +82,7 @@ function run_tests {
 
 	run_TPCC 10 4 1
 
+  echo "Finish run_single.sh"
 }
 
 

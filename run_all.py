@@ -205,7 +205,7 @@ def modify_dynamic_params(args, benchmark, mode, abmode, zipf):
         
         if modified:
             f = tempfile.NamedTemporaryFile(
-                mode='w', 
+                mode='w',
                 prefix='janus-other-{}'.format(args.experiment_name),
                 suffix='.yml',
                 dir=TMP_DIR,
@@ -228,22 +228,36 @@ def aggregate_configs(*args):
     return config
 
 
+# Tianxi: Read, parse, process config files (*.yml) and cmd argument. Output plain config files in TMP_DIR
+# In total, three files will be generated, 'janus-proc-xxx', 'janus-other-xxx' and 'janus-final-xxx'.
+# The ret type is dict that has kv pairs of config
 def generate_config(args, experiment_name, benchmark, mode, zipf, client_load, num_client,
                     num_server, num_replicas):
     logger.debug("generate_config: {}, {}, {}, {}, {}".format(
         experiment_name, benchmark, mode, num_client, zipf))
     hosts_config = load_config(args.hosts_file)
+    # Tianxi: Generate tmp file in /tmp with site and process config
     proc_and_site_config = gen_process_and_site(args, experiment_name,
                                                 num_client, num_server,
                                                 num_replicas, hosts_config, mode)
     
     logger.debug("site and process config: %s", proc_and_site_config)
     cc_mode, ab_mode = mode.split(':')
+    # Tianxi: Parse and process 'other_config (-cc) in run_all.py invocation'. If new configs are added, append to the tmp file created above
+    # For example, in run_single.sh, it has client_closed.yml, concurrent.yml, tpcc.yml and tapir.yml
     config_files = modify_dynamic_params(args, benchmark, cc_mode, ab_mode,
-                                         zipf) 
+                                         zipf)
+    # Tianxi: Tmp add
+    print("config_files:", config_files)
+
     config_files.insert(0, args.hosts_file)
     config_files.append(proc_and_site_config)
+
+    # Tianxi: Add border
+    print("------------------- run_all.py config_file Configuration -------------------")
     logger.info(config_files)
+    print("----------------------------------------------------------------------------")
+
     result = aggregate_configs(*config_files)
 
     if result['client']['type'] == 'open':
@@ -261,7 +275,12 @@ def generate_config(args, experiment_name, benchmark, mode, zipf, client_load, n
         delete=False) as f:
         f.write(yaml.dump(result))
         result = f.name
+
+    # Tianxi: Add border
+    print("--------------------- run_all.py result Configuration ----------------------")
     logger.info("result: %s", result)
+    print("----------------------------------------------------------------------------")
+
     return result
 
 exp_id = 0
@@ -361,6 +380,7 @@ def aggregate_results(name):
         cc = os.path.join(os.getcwd(), 'scripts/aggregate_run_output.py')
         cmd = [cc, '-p', name, '-r', save_git_revision()]
         os.chdir(archive_dir)
+        # Glob for collecting input to aggregate
         cmd += glob.glob('*yml')
 
         res=subprocess.call(cmd)
@@ -374,6 +394,10 @@ def run_experiments(args):
     server_counts = itertools.chain.from_iterable([get_range(sr) for sr in args.server_counts])
     client_counts = itertools.chain.from_iterable([get_range(cr) for cr in args.client_counts])
 
+    # Tianxi: Tmp add
+    print("server_counts=", server_counts)
+    print("client_counts=", client_counts)
+
     experiment_params = (server_counts,
                          client_counts,
                          args.modes,
@@ -382,7 +406,11 @@ def run_experiments(args):
                          args.client_loads)
 
     experiments = itertools.product(*experiment_params)
+    exp_cnt = 0
     for params in experiments:
+        print("run_experiments, cnt=", exp_cnt, ", params=", params)
+        exp_cnt = exp_cnt + 1
+
         (num_server, num_client, mode, benchmark, zipf, client_load) = params
         experiment_suffix = gen_experiment_suffix(
             benchmark,
@@ -422,13 +450,17 @@ def run_experiments(args):
             traceback.print_exc()
     
     aggregate_results(experiment_name)
+
+    # Tianxi: run_single.sh currently not enabled
     generate_graphs(args)
 
                    
 
 def print_args(args):
+    print("----------------------- run_all.py Arg Configuration -----------------------")
     for k,v in args.__dict__.iteritems():
         logger.debug("%s = %s", k, v)
+    print("----------------------------------------------------------------------------")
 
 
 def main():
@@ -437,6 +469,7 @@ def main():
     args = parse_commandline()
     print_args(args)
     try:
+        # Tianxi: Call syscall setpgrp which sets (or gets) the group id of the process. If arg is not given, use the current pid to the process group id.
         os.setpgrp()
         run_experiments(args)
     except Exception:

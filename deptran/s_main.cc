@@ -8,6 +8,11 @@
 #include "benchmark_control_rpc.h"
 #include "server_worker.h"
 
+#include "config.h"
+#include <glog/logging.h>
+#include <sstream>
+using namespace rococo;
+
 #ifdef CPU_PROFILE
 # include <google/profiler.h>
 #endif // ifdef CPU_PROFILE
@@ -85,7 +90,8 @@ void server_launch_worker(vector<Config::SiteInfo>& server_sites) {
       Log_info("start communication for site %d", (int)worker.site_info_->id);
       worker.SetupCommo();
       Log_info("site %d launched!", (int)site_info.id);
-    }));
+    }
+    ));
   }
 
   Log_info("waiting for client setup threads.");
@@ -140,12 +146,32 @@ int main(int argc, char *argv[]) {
     return ret;
   }
 
-  auto server_infos = Config::GetConfig()->GetMyServers();
+  // Tianxi: Check info of server_infos
+  vector<struct Config::SiteInfo> server_infos = Config::GetConfig()->GetMyServers();
+  std::stringstream ss;
+  for (int i = 0; i < server_infos.size(); ++i) {
+      Config::SiteInfo& site_info = server_infos[i];
+      ss << "SiteInfo, index=" << i
+            << ", id="<< site_info.id
+            << ", locale_id="<< site_info.locale_id
+            << ", name="<< site_info.name
+            << ", proc_name="<< site_info.proc_name
+            << ", host="<< site_info.host
+            << ", port="<< site_info.port
+            << ", n_thread="<< site_info.n_thread
+            << ", type_="<< site_info.type_
+            << ", partition_id_="<< site_info.partition_id_ << std::endl;
+  }
+  LOG(INFO) << ss.str();
+  ss.str("");
+
   if (server_infos.size() > 0) {
+      // Start worker for each thread to load the table, start service and start communicator
     server_launch_worker(server_infos);
   }
 
 #ifdef CPU_PROFILE
+  LOG(INFO) << "CPU_PROFILE enabled";
   char prof_file[1024];
   Config::GetConfig()->GetProfilePath(prof_file);
   // start to profile

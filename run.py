@@ -650,12 +650,14 @@ class ServerController(object):
         self.pre_time = time.time()
 
     def server_kill(self):
+        print("start server_kill")
         hosts = { pi.host_address for pi in self.process_infos.itervalues() }
         ps_output = ps.ps(hosts, "deptran_server")
         logger.debug("Existing Server or Client Processes:\n{}".format(ps_output))
         ps.killall(hosts, "deptran_server", "-9")
         ps_output = ps.ps(hosts, "deptran_server")
         logger.debug("Existing Server or Client After Kill:\n{}".format(ps_output))
+        print("end server_kill")
 
     def setup_heartbeat(self, client_controller):
         logger.debug("in setup_heartbeat")
@@ -865,6 +867,7 @@ class ServerController(object):
 
         t_list = []
         for process_name, process in self.process_infos.iteritems():
+            print("ServerController.start(), process_name=", process_name, "process=", process)
             t = Thread(target=run_one_server,
                        args=(process, process_name, host_process_counts,))
             t.start()
@@ -1091,6 +1094,15 @@ class ProcessInfo:
         return sites
 
 
+# Tianxi: Put up an example here:
+# process: {c0: host26, s0: host1, s1: host10, s2: host11, s3: host1, s4: host10, s5: host11}
+# host: {host1: 10.10.1.1, host10: 10.10.1.10, host11: 10.10.1.11, host12: 10.10.1.12}
+# site:
+#   client:
+#   - [c0]
+#   server:
+#   - ['s0:10000']
+#   - ['s1:10001']
 def get_process_info(config):
     hosts = config['host']
     processes = config['process']
@@ -1157,9 +1169,12 @@ def main():
         config = build_config(create_parser().parse_args())
         setup_experiment(config)
 
+        # Read config_file (typically 'janus-final-xxx.yml') and init ProcessInfo for each process (server and client)
+        # It returns a dict of <process_id : ProcessInfo>
         process_infos = get_process_info(config)
         server_controller = ServerController(config, process_infos)
         logger.debug("before server_controller.start");
+        # Tianxi: Start deptran_server with ssh
         server_controller.start()
         logger.debug("after server_controller.start");
 

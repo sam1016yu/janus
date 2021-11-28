@@ -75,6 +75,15 @@ def configure(conf):
     conf.env.LIB_PTHREAD = 'pthread'
     conf.check_cfg(package='yaml-cpp', uselib_store='YAML-CPP', args=pargs)
 
+    # Tianxi: Add gflags and glog
+    conf.env.LIB_GFLAGS = 'gflags'
+    conf.env.LIBPATH_GFLAGS = '/proj/osu-nfs-test-PG0/tianxi/install/gflags-2.2.1/lib'
+    conf.env.INCLUDES_GFLAGS = '/proj/osu-nfs-test-PG0/tianxi/install/gflags-2.2.1/include'
+
+    conf.env.LIB_GLOG = "glog"
+    conf.env.LIBPATH_GLOG = "/proj/osu-nfs-test-PG0/tianxi/install/glog-0.3.5/lib"
+    conf.env.INCLUDES_GLOG = "/proj/osu-nfs-test-PG0/tianxi/install/glog-0.3.5/include"
+
     if sys.platform != 'darwin':
         conf.env.LIB_RT = 'rt'
 
@@ -156,9 +165,9 @@ def build(bld):
                                          "deptran/*/*.cc "
                                          "bench/*/*.cc"),
                 target="deptran_server",
-                includes=". rrr deptran ",
+                includes=". rrr deptran",
                 uselib="YAML-CPP " + BOOST_LIBS,
-                use="rrr memdb PTHREAD PROFILER RT")
+                use="rrr memdb PTHREAD PROFILER RT GFLAGS GLOG")
 
 #    bld.program(source=bld.path.ant_glob("deptran/c_main.cc"),
 #                target="deptran_client",
