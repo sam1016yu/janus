@@ -146,7 +146,8 @@ def gen_process_and_site(args, experiment_name, num_c, num_s, num_replicas, host
         strategy = layout_strategies[ClientPlacement.WITH_LEADER]
     else:
         strategy = layout_strategies[ClientPlacement.BALANCED]
-    
+
+    # Tianxi: Observation: datacenters is an empty dict in default run_single.sh, num_c = #clients threads, num_s = #servers threads, hosts_config is the parsed config/hosts.yml file
     layout = strategy.generate_layout(args, num_c, num_s, num_replicas, hosts_config)
 
     if not os.path.isdir(TMP_DIR):
@@ -247,16 +248,11 @@ def generate_config(args, experiment_name, benchmark, mode, zipf, client_load, n
     # For example, in run_single.sh, it has client_closed.yml, concurrent.yml, tpcc.yml and tapir.yml
     config_files = modify_dynamic_params(args, benchmark, cc_mode, ab_mode,
                                          zipf)
-    # Tianxi: Tmp add
-    print("config_files:", config_files)
 
     config_files.insert(0, args.hosts_file)
     config_files.append(proc_and_site_config)
 
-    # Tianxi: Add border
-    print("------------------- run_all.py config_file Configuration -------------------")
-    logger.info(config_files)
-    print("----------------------------------------------------------------------------")
+    logger.info("Extra config files: {}".format(config_files))
 
     result = aggregate_configs(*config_files)
 
@@ -277,9 +273,7 @@ def generate_config(args, experiment_name, benchmark, mode, zipf, client_load, n
         result = f.name
 
     # Tianxi: Add border
-    print("--------------------- run_all.py result Configuration ----------------------")
     logger.info("result: %s", result)
-    print("----------------------------------------------------------------------------")
 
     return result
 
@@ -394,10 +388,6 @@ def run_experiments(args):
     server_counts = itertools.chain.from_iterable([get_range(sr) for sr in args.server_counts])
     client_counts = itertools.chain.from_iterable([get_range(cr) for cr in args.client_counts])
 
-    # Tianxi: Tmp add
-    print("server_counts=", server_counts)
-    print("client_counts=", client_counts)
-
     experiment_params = (server_counts,
                          client_counts,
                          args.modes,
@@ -408,7 +398,6 @@ def run_experiments(args):
     experiments = itertools.product(*experiment_params)
     exp_cnt = 0
     for params in experiments:
-        print("run_experiments, cnt=", exp_cnt, ", params=", params)
         exp_cnt = exp_cnt + 1
 
         (num_server, num_client, mode, benchmark, zipf, client_load) = params
@@ -457,14 +446,15 @@ def run_experiments(args):
                    
 
 def print_args(args):
-    print("----------------------- run_all.py Arg Configuration -----------------------")
     for k,v in args.__dict__.iteritems():
         logger.debug("%s = %s", k, v)
-    print("----------------------------------------------------------------------------")
 
 
 def main():
-    logging.basicConfig(format="%(levelname)s : %(message)s")
+    # logging.basicConfig(format="%(levelname)s : %(message)s")
+    # Tianxi: Add timestamp and filename lineno to logging
+    logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+                        datefmt='%Y-%m-%d:%H:%M:%S')
     logger.setLevel(logging.DEBUG)
     args = parse_commandline()
     print_args(args)

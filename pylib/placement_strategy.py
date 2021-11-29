@@ -4,6 +4,9 @@ import logging
 import math
 import copy
 
+# Tianxi: Refomat logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+					datefmt='%Y-%m-%d:%H:%M:%S')
 logger = logging.getLogger('')
 
 class ClientPlacement:
@@ -20,6 +23,9 @@ class BalancedPlacementStrategy:
 		self.num_s = num_s
 		self.num_replicas = num_replicas
 
+		# Tianxi: If args.data_centers is not set (in run_all.py), the below call will return a dict of size 1. Then the below generate_process() will set num_datacenters to 1
+		# Tianxi: Number of server nodes involved = num_s (shards in run_single.sh and args.server_counts in run_all.py) / args.cpu_count
+		# Tianxi: The ultimate server count will be divided by Number of datacenters (which is by default 1)
 		hosts = self.hosts_by_datacenter(hosts_config['host'].keys(), data_centers)
 		server_names = [ 's'+str(i) for i in range(num_s * num_replicas) ]
 		client_names = [ 'c'+str(i) for i in range(num_c) ]

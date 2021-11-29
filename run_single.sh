@@ -36,7 +36,9 @@ function TPCC_wrapper {
 	write_concurrent $concurrent
 	# number of -c is the client numbers tested (times the concurrent number currently stored in /tmp/concurrent.yml)
 #	timeout -s SIGKILL 12m ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
-	timeout -s SIGKILL ${timeout_s}s ./run_all.py -g -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
+
+  # Set timout to be duration + 30 (s); disable generate_graph;
+	timeout -s SIGKILL ${timeout_s}s ./run_all.py -hh config/hosts.yml -cc config/client_closed.yml -cc /tmp/concurrent.yml -cc config/tpcc.yml -cc config/tapir.yml -b tpcc -m ${alg} -c 1   -s $shards -u $cpu -r $replica -d $duration $exp_name
 
 	new_experiment $exp_name
 
@@ -79,6 +81,9 @@ function run_tests {
 	# 		done
 	# 	done
 	# done
+
+	# Tianxi: shards (server nodes total thread count) | cpu (number of threads per server node) | replica
+	# Tianxi: Number of server nodes = ceil(shards / cpu)
 
 	run_TPCC 10 4 1
 

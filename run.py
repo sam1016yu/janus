@@ -35,6 +35,9 @@ from pylib import ps
 
 LOG_LEVEL = logging.INFO
 LOG_FILE_LEVEL = logging.DEBUG
+# Tianxi: Refomat logging
+logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+                    datefmt='%Y-%m-%d:%H:%M:%S')
 logger = logging.getLogger('janus')
 #logger.addHandler(logging.StreamHandler())
 
@@ -650,14 +653,12 @@ class ServerController(object):
         self.pre_time = time.time()
 
     def server_kill(self):
-        print("start server_kill")
         hosts = { pi.host_address for pi in self.process_infos.itervalues() }
         ps_output = ps.ps(hosts, "deptran_server")
         logger.debug("Existing Server or Client Processes:\n{}".format(ps_output))
         ps.killall(hosts, "deptran_server", "-9")
         ps_output = ps.ps(hosts, "deptran_server")
         logger.debug("Existing Server or Client After Kill:\n{}".format(ps_output))
-        print("end server_kill")
 
     def setup_heartbeat(self, client_controller):
         logger.debug("in setup_heartbeat")
@@ -867,7 +868,7 @@ class ServerController(object):
 
         t_list = []
         for process_name, process in self.process_infos.iteritems():
-            print("ServerController.start(), process_name=", process_name, "process=", process)
+            logger.info("ServerController.start(), process_name={}, process={}".format(process_name, process))
             t = Thread(target=run_one_server,
                        args=(process, process_name, host_process_counts,))
             t.start()
@@ -1137,19 +1138,19 @@ def setup_logging(log_file_path=None):
     root_logger.setLevel(LOG_LEVEL)
 
     if log_file_path is not None:
-        print("logging to file: %s" % log_file_path)
+        print("Logging to file: %s" % log_file_path)
         fh = logging.FileHandler(log_file_path)
         fh.setLevel(LOG_FILE_LEVEL)
         formatter = logging.Formatter(fmt='%(levelname)s: %(asctime)s: %(message)s')
         fh.setFormatter(formatter)
         root_logger.addHandler(fh)
 
-    ch = logging.StreamHandler()
-    ch.setLevel(LOG_LEVEL)
-    formatter = logging.Formatter(fmt='%(levelname)s: %(message)s')
-    ch.setFormatter(formatter)
-    root_logger.addHandler(ch)
-    logger.debug('logger initialized')
+    # ch = logging.StreamHandler()
+    # ch.setLevel(LOG_LEVEL)
+    # formatter = logging.Formatter(fmt='%(levelname)s: %(message)s')
+    # ch.setFormatter(formatter)
+    # root_logger.addHandler(ch)
+    # logger.debug('logger initialized')
 
 
 def setup_experiment(config):
